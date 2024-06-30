@@ -1,70 +1,63 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
-public class StudentGradeManager {
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Welcome to Student Grade Manager");
-
-        System.out.print("Enter student name: ");
-        String studentName = scanner.nextLine();
-
-        System.out.print("Enter number of subjects or assignments: ");
-        int numSubjects = scanner.nextInt();
-        scanner.nextLine(); // Consume newline character
-
-        List<String> subjects = new ArrayList<>();
-        List<Double> grades = new ArrayList<>();
-
-        for (int i = 0; i < numSubjects; i++) {
-            System.out.print("Enter subject or assignment name " + (i + 1) + ": ");
-            String subject = scanner.nextLine();
-            subjects.add(subject);
-
-            System.out.print("Enter grade for " + subject + ": ");
-            double grade = scanner.nextDouble();
-            grades.add(grade);
-
-            scanner.nextLine(); // Consume newline character
-        }
-
-        // Calculate average grade
-        double totalGrade = 0;
-        for (double grade : grades) {
-            totalGrade += grade;
-        }
-        double averageGrade = totalGrade / numSubjects;
-
-        // Determine letter grade based on average
-        String letterGrade = calculateLetterGrade(averageGrade);
-
-        // Display results
-        System.out.println("\nStudent Name: " + studentName);
-        System.out.println("Subject/Assignment\tGrade");
-        System.out.println("----------------------------");
-        for (int i = 0; i < numSubjects; i++) {
-            System.out.println(subjects.get(i) + "\t\t\t" + grades.get(i));
-        }
-        System.out.println("\nAverage Grade: " + averageGrade);
-        System.out.println("Letter Grade: " + letterGrade);
-
-        scanner.close();
-    }
-
-    private static String calculateLetterGrade(double averageGrade) {
-        if (averageGrade >= 90) {
-            return "A";
-        } else if (averageGrade >= 80) {
-            return "B";
-        } else if (averageGrade >= 70) {
-            return "C";
-        } else if (averageGrade >= 60) {
-            return "D";
-        } else {
-            return "F";
-        }
-    }
+from gtts import gTTS
+from pydub import AudioSegment
+from pydub.playback import play
+import os
+# Language and Voice Options
+language_options = {
+    'en': 'en',
+    'fr': 'fr'
 }
+
+voice_options = {
+    'en': 'en-us',   # English (US)
+    'fr': 'fr'       # French
+}
+def text_to_speech(text, language='en'):
+    # Validate language option
+    language_code = language_options.get(language)
+    if not language_code:
+        print(f"Language '{language}' is not supported.")
+        return
+    
+    # Select voice
+    voice = voice_options.get(language)
+    
+    # Generate TTS audio
+    tts = gTTS(text=text, lang=voice, slow=False)
+    
+    # Save audio to a temporary file
+    audio_file = "D:\output.mp3"
+    tts.save(audio_file)
+    
+    # Play the audio
+    play(AudioSegment.from_file(audio_file))
+    
+    # Delete the temporary audio file
+    os.remove(audio_file)
+def main():
+    print("Welcome to the Text-to-Speech Conversation App!")
+    print("Supported languages: English (en), French (fr)")
+    
+    while True:
+        text = input("\nEnter the text you want to convert to speech (type 'exit' to quit): ")
+        
+        if text.lower() == 'exit':
+            break
+        
+        language = input("Enter the language code (e.g., 'en' for English, 'fr' for French): ")
+        
+        if language.lower() == 'exit':
+            break
+        
+        if language not in language_options:
+            print(f"Language '{language}' is not supported.")
+            continue
+        
+        # Convert text to speech
+        text_to_speech(text, language)
+        
+    print("\nThank you for using the Text-to-Speech Conversation App!")
+
+if __name__ == "__main__":
+    main()
+
